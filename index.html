@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>酿豆腐配料计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            overflow-x: hidden;
+            -webkit-text-size-adjust: none;
+        }
+        body {
+            background: linear-gradient(135deg, #FFF7F0 0%, #FFE8D6 50%, #FFF0E8 100%);
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+            font-size: 16px;
+        }
+        .card {
+            max-width: 440px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(255, 140, 80, 0.15), 0 2px 8px rgba(255, 140, 80, 0.08);
+            padding: 28px 24px;
+            animation: fadeIn 0.5s ease-out;
+            overflow: hidden;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        .input-wrap {
+            margin-bottom: 28px;
+        }
+        .input-label {
+            font-size: 15px;
+            color: #8B6F5C;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+      .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+     #taro {
+            flex: 1 1 0%;
+            width: 0;
+            padding: 16px 18px;
+            border: 2px solid #FFE0CC;
+            border-radius: 14px;
+            font-size: 22px;
+            color: #3D2817;
+            background: #FFFAF6;
+            outline: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        #taro:focus {
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+            background: #ffffff;
+        }
+   #unitSwitch {
+            flex: 0 0 auto;
+            width: 64px;
+            height: 58px;
+            padding: 0;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        #unitSwitch:active {
+            transform: scale(0.95);
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 10px;
+            font-size: 16px;
+            color: #5A4230;
+            border-bottom: 1px solid #F8EFE8;
+            transition: background 0.15s ease;
+            border-radius: 8px;
+        }
+        .item-row:hover {
+            background: #FFFAF6;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        .name-col { 
+            width: 55%; 
+            font-weight: 500;
+        }
+        .val-col { 
+            width: 45%; 
+            text-align: right; 
+            font-weight: 700; 
+            color: #FF6B35;
+            font-size: 17px;
+        }
+        .tip-text {
+            position: relative;
+            background: linear-gradient(135deg, #FFF0E6, #FFE4D1);
+            color: #C2410C;
+            text-align: center;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 11px 16px;
+            margin: 16px 0 10px;
+            letter-spacing: 0.3px;
+        }
+        .tip-text::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+            background: linear-gradient(180deg, #FF6B35, #FF8C42);
+        }
+        /* 调料组：暖粉色渐变 */
+        .box-season {
+            background: linear-gradient(135deg, #FFF0EC, #FFE4DC);
+            border-radius: 14px;
+            padding: 4px 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 140, 100, 0.15);
+        }
+        /* 粉类组：暖黄色渐变 */
+        .box-powder {
+            background: linear-gradient(135deg, #FFFBF0, #FFF3D6);
+            border-radius: 14px;
+            padding: 4px 12px;
+            border: 1px solid rgba(255, 200, 80, 0.2);
+        }
+        .box-season .val-col {
+            color: #E8431E;
+        }
+        .box-powder .val-col {
+            color: #D48806;
+        }
+        /* 底部标签 */
+        .footer-tag {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #C9B8A8;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🍢 酿豆腐配料计算器</h1>
+        <div class="input-wrap">
+            <label class="input-label">✨ 新鲜芋泥</label>
+            <div class="input-row">
+                <input type="number" id="taro" value="5000" inputmode="decimal" oninput="calc()">
+                <button id="unitSwitch" onclick="toggleUnit()">克</button>
+            </div>
+        </div>
+<div class="item-row"><div class="name-col">🥟 油豆腐</div><div class="val-col" id="p1"></div></div>
+<div class="item-row"><div class="name-col">🥕 萝卜</div><div class="val-col" id="p2"></div></div>
+<div class="item-row"><div class="name-col">🧈 猪油</div><div class="val-col" id="p5"></div></div>
+<div class="item-row"><div class="name-col">🌿 葱</div><div class="val-col" id="p3"></div></div>
+<div class="item-row"><div class="name-col">🍄 香菇</div><div class="val-col" id="p4"></div></div>
+<div class="item-row"><div class="name-col">🐟 大地鱼沫</div><div class="val-col" id="p6"></div></div>
+<div class="item-row"><div class="name-col">🍥 柴鱼粉</div><div class="val-col" id="p9"></div></div>
+<div class="item-row"><div class="name-col">🔸 小头成品</div><div class="val-col" id="p8"></div></div>
+<div class="item-row"><div class="name-col">🦐 虾肉</div><div class="val-col" id="p7"></div></div>
+
+       <div class="tip-text">👉 下面4种调料，一起下料</div>
+        <div class="box-season">
+            <div class="item-row"><div class="name-col">🧂 盐</div><div class="val-col" id="p10"></div></div>
+            <div class="item-row"><div class="name-col">✨ 味精</div><div class="val-col" id="p11"></div></div>
+            <div class="item-row"><div class="name-col">🧊 鸡精</div><div class="val-col" id="p12"></div></div>
+            <div class="item-row"><div class="name-col">🍗 盐鸡粉</div><div class="val-col" id="p13"></div></div>
+        </div>
+
+        <div class="tip-text">🍞 下面2种粉类，一起下料</div>
+        <div class="box-powder">
+            <div class="item-row"><div class="name-col">🍚 糯米粉</div><div class="val-col" id="p14"></div></div>
+            <div class="item-row"><div class="name-col">🌾 淀粉</div><div class="val-col" id="p15"></div></div>
+        </div>
+
+        <div class="footer-tag">🥄 酿出好味道 · 按比例调配更美味</div>
+    </div>
+
+<script>
+const baseGram = 5000;
+const listGram = [
+    1666.66666666667,
+    1330,
+    350,
+    120,
+    600,
+    60,
+    3,
+    17.5,
+    50,
+    56,
+    29,
+    14.5,
+    3,
+    100,
+    100
+];
+let useJin = false;
+let currentGram = 5000;
+
+function toggleUnit(){
+    useJin = !useJin;
+    const btn = document.getElementById("unitSwitch");
+    const taroInput = document.getElementById("taro");
+    if(useJin){
+        btn.innerText = "斤";
+        taroInput.value = (currentGram / 500).toFixed(2);
+    }else{
+        btn.innerText = "克";
+        taroInput.value = Math.round(currentGram);
+    }
+    calc();
+}
+
+function formatNum(gramVal){
+    let num, suffix;
+    if(useJin){
+        num = gramVal / 500;
+        suffix = "斤";
+        return num.toFixed(2) + " " + suffix;
+    }else{
+        num = gramVal;
+        suffix = "g";
+        if(num >= 100){
+            return num.toFixed(0) + " " + suffix;
+        }else{
+            return num.toFixed(1) + " " + suffix;
+        }
+    }
+}
+
+function calc(){
+    let inputVal = Number(document.getElementById('taro').value) || 0;
+    currentGram = useJin ? inputVal * 500 : inputVal;
+    const rate = currentGram / baseGram;
+    listGram.forEach(function(v, i){
+        const resGram = v * rate;
+        document.getElementById('p'+(i+1)).innerText = formatNum(resGram);
+    });
+}
+calc();
+</script>
+</body>
+</html>
